@@ -181,6 +181,18 @@ export default function App() {
     }
   };
 
+  const snoozeMed = async (med: Med) => {
+    const triggerDate = new Date(Date.now() + 10 * 60 * 1000);
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Yaad se Dawai 💊 (Snooze)',
+        body: `${med.name} (${med.dose}) ka snoozed reminder`,
+      },
+      trigger: triggerDate,
+    });
+    Alert.alert('Snoozed', `${med.name} reminder 10 min baad aayega.`);
+  };
+
   const startVoice = async () => {
     try {
       setIsListening(true);
@@ -239,6 +251,9 @@ export default function App() {
                 <TouchableOpacity onPress={() => markDose(item, 'skipped')} style={styles.skipBtn}>
                   <Text style={styles.smallBtnText}>Skip</Text>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => snoozeMed(item)} style={styles.snoozeBtn}>
+                  <Text style={styles.smallBtnText}>Snooze 10m</Text>
+                </TouchableOpacity>
               </View>
             </View>
             <TouchableOpacity onPress={() => deleteMed(item.id)} style={styles.deleteBtn}>
@@ -247,6 +262,20 @@ export default function App() {
           </View>
         )}
         ListEmptyComponent={<Text style={{ color: '#6b7280', textAlign: 'center', marginTop: 28 }}>Abhi koi medicine add nahi hai.</Text>}
+        ListFooterComponent={
+          <View style={styles.logBox}>
+            <Text style={styles.logTitle}>Recent Dose Activity</Text>
+            {logs.length === 0 ? (
+              <Text style={styles.logItem}>No activity yet.</Text>
+            ) : (
+              logs.slice(0, 6).map((l) => (
+                <Text key={l.id} style={styles.logItem}>
+                  {l.status === 'taken' ? '✅' : '⏭️'} {l.medName} • {new Date(l.at).toLocaleString()}
+                </Text>
+              ))
+            )}
+          </View>
+        }
       />
     </SafeAreaView>
   );
@@ -271,6 +300,10 @@ const styles = StyleSheet.create({
   rowSmall: { flexDirection: 'row', gap: 8, marginTop: 8 },
   takeBtn: { backgroundColor: '#16a34a', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
   skipBtn: { backgroundColor: '#f59e0b', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+  snoozeBtn: { backgroundColor: '#0ea5e9', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
   smallBtnText: { color: '#fff', fontWeight: '700', fontSize: 12 },
   deleteBtn: { backgroundColor: '#dc2626', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10 },
+  logBox: { marginTop: 14, backgroundColor: '#ffffff', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: '#dbeafe' },
+  logTitle: { fontWeight: '800', color: '#1e3a8a', marginBottom: 8 },
+  logItem: { color: '#334155', fontSize: 12, marginBottom: 6 },
 });
