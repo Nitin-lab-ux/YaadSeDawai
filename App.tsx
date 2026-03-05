@@ -51,6 +51,10 @@ function extractTimes(text: string): string[] {
   const t = text.toLowerCase();
   const slots: string[] = [];
 
+  const freq2 = /(din me 2 baar|2 times|twice|bd)/.test(t);
+  const freq3 = /(din me 3 baar|3 times|thrice|tid)/.test(t);
+  const freq1 = /(din me 1 baar|once daily|once|od)/.test(t);
+
   const regex = /(\d{1,2}(?::\d{1,2})?\s*(?:am|pm)?)/g;
   const found = t.match(regex) ?? [];
   for (const f of found) {
@@ -63,6 +67,12 @@ function extractTimes(text: string): string[] {
     if (/(dopahar|afternoon|lunch)/.test(t)) slots.push('14:00');
     if (/(shaam|evening)/.test(t)) slots.push('18:00');
     if (/(raat|night)/.test(t)) slots.push('21:00');
+  }
+
+  if (slots.length === 0) {
+    if (freq3) return ['08:00', '14:00', '21:00'];
+    if (freq2) return ['08:00', '20:00'];
+    if (freq1) return ['09:00'];
   }
 
   return slots.slice(0, 6);
@@ -141,6 +151,14 @@ export default function App() {
   }, [logs]);
 
   const totalReminders = useMemo(() => list.reduce((acc, m) => acc + m.times.length, 0), [list]);
+
+  const todayStats = useMemo(() => {
+    const today = new Date().toDateString();
+    const todays = logs.filter((l) => new Date(l.at).toDateString() === today);
+    const taken = todays.filter((l) => l.status === 'taken').length;
+    const skipped = todays.filter((l) => l.status === 'skipped').length;
+    return { taken, skipped, total: todays.length };
+  }, [logs]);
 
   const addFromAI = async () => {
     const parsed = parseMedicineCommand(command);
@@ -237,6 +255,10 @@ export default function App() {
       </View>
 
       <Text style={styles.meta}>Medicines: {list.length} • Daily reminders: {totalReminders}</Text>
+      <View style={styles.statsCard}>
+        <Text style={styles.statsTitle}>Today Adherence</Text>
+        <Text style={styles.statsText}>Taken: {todayStats.taken}   Skipped: {todayStats.skipped}   Total: {todayStats.total}</Text>
+      </View>
 
       <FlatList
         data={list}
@@ -297,6 +319,9 @@ const styles = StyleSheet.create({
   btnGhost: { paddingHorizontal: 14, borderRadius: 12, borderWidth: 1, borderColor: '#93c5fd', justifyContent: 'center', backgroundColor: '#eff6ff' },
   btnGhostText: { color: '#1d4ed8', fontWeight: '700' },
   meta: { marginVertical: 12, color: '#334155', fontWeight: '600' },
+  statsCard: { backgroundColor: '#ecfeff', borderColor: '#a5f3fc', borderWidth: 1, borderRadius: 12, padding: 10, marginBottom: 10 },
+  statsTitle: { color: '#155e75', fontWeight: '800' },
+  statsText: { color: '#0f172a', marginTop: 2, fontWeight: '600' },
   item: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 14, borderWidth: 1, borderColor: '#e2e8f0', padding: 12, marginBottom: 8 },
   itemTitle: { fontWeight: '800', color: '#0f172a', fontSize: 16 },
   itemSub: { color: '#334155', marginTop: 2 },
