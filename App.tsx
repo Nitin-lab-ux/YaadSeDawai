@@ -188,7 +188,10 @@ export default function App() {
         title: 'Yaad se Dawai 💊 (Snooze)',
         body: `${med.name} (${med.dose}) ka snoozed reminder`,
       },
-      trigger: triggerDate,
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DATE,
+        date: triggerDate,
+      },
     });
     Alert.alert('Snoozed', `${med.name} reminder 10 min baad aayega.`);
   };
