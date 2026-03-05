@@ -47,3 +47,20 @@ npx expo start
 npx expo run:android
 ```
 (Needs Android SDK setup)
+
+## Direct APK install via GitHub flow
+To get installable APK links from your repo workflow:
+
+1. Create Expo account and login once locally:
+```bash
+npx expo login
+npx eas login
+```
+2. In GitHub repo settings → Secrets and variables → Actions, add:
+- `EXPO_TOKEN` (from Expo account access token)
+3. Push to `main` or run workflow manually:
+- `.github/workflows/android-apk.yml`
+4. Workflow will build APK using EAS (`preview` profile).
+5. Share the generated install link from EAS build output in Actions logs.
+
+This gives a production-like installable APK pipeline from GitHub updates.
