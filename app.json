@@ -14,18 +14,23 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Yaad se Dawai voice command ke liye microphone use karta hai.",
-        "NSSpeechRecognitionUsageDescription": "Yaad se Dawai voice commands samajhne ke liye speech recognition use karta hai."
+        "NSMicrophoneUsageDescription": "Allow Yaad se Dawai to use microphone for voice medicine commands.",
+        "NSSpeechRecognitionUsageDescription": "Allow Yaad se Dawai to recognize speech for AI reminder setup."
       }
     },
     "android": {
+      "package": "com.nitinlabux.yaadsedawai",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "permissions": ["RECORD_AUDIO", "SCHEDULE_EXACT_ALARM", "POST_NOTIFICATIONS"],
+      "permissions": [
+        "RECORD_AUDIO",
+        "SCHEDULE_EXACT_ALARM",
+        "POST_NOTIFICATIONS"
+      ],
       "predictiveBackGestureEnabled": false
     },
     "web": {

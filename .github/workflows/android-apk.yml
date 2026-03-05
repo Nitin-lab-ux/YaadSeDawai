@@ -28,4 +28,4 @@ jobs:
           npm ci || (echo "npm ci failed, retrying in 20s..." && sleep 20 && npm ci)
 
       - name: Trigger EAS APK build
-        run: eas build --platform android --profile preview --non-interactive --wait
+        run: CI=1 eas build --platform android --profile preview --non-interactive --wait
