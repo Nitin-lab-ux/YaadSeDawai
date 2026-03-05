@@ -14,7 +14,16 @@ type Med = {
   notes?: string;
 };
 
+type DoseLog = {
+  id: string;
+  medId: string;
+  medName: string;
+  status: 'taken' | 'skipped';
+  at: string;
+};
+
 const STORAGE_KEY = 'yaad-se-dawai:list:v1';
+const LOG_KEY = 'yaad-se-dawai:log:v1';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -102,6 +111,7 @@ function nextTriggerFor(timeHHMM: string) {
 export default function App() {
   const [command, setCommand] = useState('');
   const [list, setList] = useState<Med[]>([]);
+  const [logs, setLogs] = useState<DoseLog[]>([]);
   const [isListening, setIsListening] = useState(false);
 
   useSpeechRecognitionEvent('result', (event) => {
@@ -117,12 +127,18 @@ export default function App() {
     (async () => {
       const saved = await AsyncStorage.getItem(STORAGE_KEY);
       if (saved) setList(JSON.parse(saved));
+      const savedLogs = await AsyncStorage.getItem(LOG_KEY);
+      if (savedLogs) setLogs(JSON.parse(savedLogs));
     })();
   }, []);
 
   useEffect(() => {
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   }, [list]);
+
+  useEffect(() => {
+    AsyncStorage.setItem(LOG_KEY, JSON.stringify(logs));
+  }, [logs]);
 
   const totalReminders = useMemo(() => list.reduce((acc, m) => acc + m.times.length, 0), [list]);
 
@@ -149,6 +165,20 @@ export default function App() {
 
   const deleteMed = async (id: string) => {
     setList((prev) => prev.filter((x) => x.id !== id));
+  };
+
+  const markDose = (med: Med, status: 'taken' | 'skipped') => {
+    const log: DoseLog = {
+      id: `${Date.now()}-${Math.random()}`,
+      medId: med.id,
+      medName: med.name,
+      status,
+      at: new Date().toISOString(),
+    };
+    setLogs((prev) => [log, ...prev].slice(0, 100));
+    if (status === 'taken') {
+      Speech.speak(`${med.name} marked as taken`, { language: 'en-US' });
+    }
   };
 
   const startVoice = async () => {
@@ -202,6 +232,14 @@ export default function App() {
             <View style={{ flex: 1 }}>
               <Text style={styles.itemTitle}>{item.name}</Text>
               <Text style={styles.itemSub}>{item.dose} • {item.times.join(', ')} {item.notes ? `• ${item.notes}` : ''}</Text>
+              <View style={styles.rowSmall}>
+                <TouchableOpacity onPress={() => markDose(item, 'taken')} style={styles.takeBtn}>
+                  <Text style={styles.smallBtnText}>Taken</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => markDose(item, 'skipped')} style={styles.skipBtn}>
+                  <Text style={styles.smallBtnText}>Skip</Text>
+                </TouchableOpacity>
+              </View>
             </View>
             <TouchableOpacity onPress={() => deleteMed(item.id)} style={styles.deleteBtn}>
               <Text style={{ color: '#fff', fontWeight: '700' }}>Delete</Text>
@@ -230,5 +268,9 @@ const styles = StyleSheet.create({
   item: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 14, borderWidth: 1, borderColor: '#e2e8f0', padding: 12, marginBottom: 8 },
   itemTitle: { fontWeight: '800', color: '#0f172a', fontSize: 16 },
   itemSub: { color: '#334155', marginTop: 2 },
+  rowSmall: { flexDirection: 'row', gap: 8, marginTop: 8 },
+  takeBtn: { backgroundColor: '#16a34a', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+  skipBtn: { backgroundColor: '#f59e0b', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+  smallBtnText: { color: '#fff', fontWeight: '700', fontSize: 12 },
   deleteBtn: { backgroundColor: '#dc2626', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10 },
 });
