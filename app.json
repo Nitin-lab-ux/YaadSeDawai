@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Yaad-Se-Dawai",
+    "slug": "Yaad-Se-Dawai",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Yaad se Dawai voice command ke liye microphone use karta hai.",
+        "NSSpeechRecognitionUsageDescription": "Yaad se Dawai voice commands samajhne ke liye speech recognition use karta hai."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": ["RECORD_AUDIO", "SCHEDULE_EXACT_ALARM", "POST_NOTIFICATIONS"],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-notifications",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow Yaad se Dawai to use microphone for voice medicine commands.",
+          "speechRecognitionPermission": "Allow Yaad se Dawai to recognize speech for AI reminder setup."
+        }
+      ]
+    ]
+  }
+}
