@@ -144,7 +144,7 @@ eas build --platform android --profile preview
 eas build --platform android --profile production
 ```
 
-### Option C: GitHub Actions se 1-click APK build ✅ (sabse easy)
+### Option C: GitHub Actions (EAS cloud)
 1. Expo account me login karo aur token banao:
    - https://expo.dev/accounts/[your-username]/settings/access-tokens
 2. GitHub repo me jao → **Settings → Secrets and variables → Actions**
@@ -156,6 +156,16 @@ eas build --platform android --profile production
 6. Build complete hone par APK link workflow summary me mil jayega
 
 Workflow file: `.github/workflows/android-apk.yml`
+
+### Option D: GitHub Actions (No EAS, direct Gradle) ✅
+Agar EAS build fail ho raha ho to yeh use karo — Expo token nahi chahiye.
+
+1. GitHub repo ke **Actions** tab me jao
+2. Workflow run karo: **Build Android APK (Direct Gradle)**
+3. Run complete hone ke baad **Artifacts** me `yaad-se-dawai-debug-apk` download karo
+4. APK file milegi: `app-debug.apk`
+
+Workflow file: `.github/workflows/android-apk-direct.yml`
 
 ### eas.json for EAS builds:
 ```json

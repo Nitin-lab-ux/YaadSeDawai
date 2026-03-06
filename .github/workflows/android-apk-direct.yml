@@ -1,0 +1,46 @@
+name: Build Android APK (Direct Gradle)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-debug-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps --ignore-scripts
+
+      - name: Build Debug APK (local Gradle)
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: yaad-se-dawai-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Build summary
+        run: |
+          echo "## ✅ Direct APK build complete" >> $GITHUB_STEP_SUMMARY
+          echo "Download artifact: yaad-se-dawai-debug-apk" >> $GITHUB_STEP_SUMMARY
