@@ -1,0 +1,53 @@
+name: Build Android APK (EAS)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps --ignore-scripts
+
+      - name: Setup Expo + EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build APK on EAS Cloud
+        id: eas_build
+        shell: bash
+        run: |
+          set -euo pipefail
+          eas build --platform android --profile preview --non-interactive --wait --json > eas-build.json
+
+          APK_URL=$(node -e "const fs=require('fs');const j=JSON.parse(fs.readFileSync('eas-build.json','utf8'));const b=Array.isArray(j)?j[0]:j;const url=b?.artifacts?.buildUrl||b?.buildUrl||b?.url||'';process.stdout.write(url);")
+
+          if [ -z "$APK_URL" ]; then
+            echo "Could not find APK URL in EAS response" >&2
+            cat eas-build.json
+            exit 1
+          fi
+
+          echo "apk_url=$APK_URL" >> "$GITHUB_OUTPUT"
+          echo "## ✅ APK Build Complete" >> "$GITHUB_STEP_SUMMARY"
+          echo "APK Download: $APK_URL" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload EAS response JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: eas-build-response
+          path: eas-build.json

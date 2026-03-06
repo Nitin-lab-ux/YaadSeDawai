@@ -144,6 +144,19 @@ eas build --platform android --profile preview
 eas build --platform android --profile production
 ```
 
+### Option C: GitHub Actions se 1-click APK build ✅ (sabse easy)
+1. Expo account me login karo aur token banao:
+   - https://expo.dev/accounts/[your-username]/settings/access-tokens
+2. GitHub repo me jao → **Settings → Secrets and variables → Actions**
+3. New secret add karo:
+   - Name: `EXPO_TOKEN`
+   - Value: Expo access token
+4. GitHub me **Actions** tab kholo
+5. Workflow run karo: **Build Android APK (EAS)**
+6. Build complete hone par APK link workflow summary me mil jayega
+
+Workflow file: `.github/workflows/android-apk.yml`
+
 ### eas.json for EAS builds:
 ```json
 {
