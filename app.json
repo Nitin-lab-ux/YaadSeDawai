@@ -1,50 +1,68 @@
 {
   "expo": {
-    "name": "Yaad-Se-Dawai",
-    "slug": "Yaad-Se-Dawai",
+    "name": "Yaad se Dawai",
+    "slug": "yaad-se-dawai",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1A1A2E"
     },
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yaadsedawai.app",
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Allow Yaad se Dawai to use microphone for voice medicine commands.",
-        "NSSpeechRecognitionUsageDescription": "Allow Yaad se Dawai to recognize speech for AI reminder setup."
+        "NSSpeechRecognitionUsageDescription": "We need microphone access to recognize your voice commands for adding medicines.",
+        "NSMicrophoneUsageDescription": "We need microphone access to record your voice commands."
       }
     },
     "android": {
-      "package": "com.nitinlabux.yaadsedawai",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1A1A2E"
       },
+      "package": "com.yaadsedawai.app",
+      "versionCode": 1,
+      "compileSdkVersion": 34,
+      "targetSdkVersion": 34,
+      "minSdkVersion": 23,
       "permissions": [
-        "RECORD_AUDIO",
-        "SCHEDULE_EXACT_ALARM",
-        "POST_NOTIFICATIONS"
-      ],
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.USE_EXACT_ALARM",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.FOREGROUND_SERVICE"
+      ]
     },
     "plugins": [
-      "expo-notifications",
       [
-        "expo-speech-recognition",
+        "expo-notifications",
         {
-          "microphonePermission": "Allow Yaad se Dawai to use microphone for voice medicine commands.",
-          "speechRecognitionPermission": "Allow Yaad se Dawai to recognize speech for AI reminder setup."
+          "icon": "./assets/notification-icon.png",
+          "color": "#FF6B35",
+          "sounds": [],
+          "mode": "production"
         }
-      ]
-    ]
+      ],
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": true
+        }
+      ],
+      "expo-speech",
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    }
   }
 }
