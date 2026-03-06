@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps --ignore-scripts
 
+      - name: Generate native android project (Expo prebuild)
+        run: npx expo prebuild --platform android --non-interactive
+
       - name: Build Debug APK (local Gradle)
         run: |
           cd android
